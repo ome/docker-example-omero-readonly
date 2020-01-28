@@ -13,7 +13,7 @@ services:
     volumes:
       - "database:/var/lib/postgresql/data"
 
-  omeroserver:
+  omeroserver-readwrite:
     image: "openmicroscopy/omero-server:5.6"
     environment:
       CONFIG_omero_db_host: database
@@ -24,15 +24,32 @@ services:
     networks:
       - omero
     ports:
-      - "4063:4063"
-      - "4064:4064"
+      - "4064"
     volumes:
       - "omero:/OMERO"
+
+  omeroserver-readonly:
+    image: "openmicroscopy/omero-server:5.6"
+    environment:
+      # TODO: setup read-only user in postgresql
+      CONFIG_omero_db_host: database
+      CONFIG_omero_db_user: omero
+      CONFIG_omero_db_pass: omero
+      CONFIG_omero_db_name: omero
+      ROOTPASS: omero
+      CONFIG_omero_cluster_read__only: "true"
+      CONFIG_omero_pixeldata_memoizer_dir_local: "/tmp/BioFormatsCache"
+    networks:
+      - omero
+    ports:
+      - "4064"
+    volumes:
+      - "omero:/OMERO:ro"
 
   omeroweb:
     image: "openmicroscopy/omero-web-standalone:5.6"
     environment:
-      OMEROHOST: omeroserver
+      CONFIG_omero_web_server__list: '[["omeroserver-readonly", 4064, "read-only"], ["omeroserver-readwrite", 4064, "read-write"]]'
     networks:
       - omero
     ports:
