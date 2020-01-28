@@ -45,6 +45,12 @@ services:
       - "4064"
     volumes:
       - "omero:/OMERO:ro"
+    depends_on:
+      - "database"
+      - "omeroserver-readwrite"
+      - "omeroweb"
+      # Wait as long as possible though it may be necessary
+      # to restart readonly if it fails on DB creation.
 
   omeroweb:
     image: "openmicroscopy/omero-web-standalone:5.6"
