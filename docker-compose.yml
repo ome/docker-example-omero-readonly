@@ -14,7 +14,9 @@ services:
       - "database:/var/lib/postgresql/data"
 
   omeroserver-readwrite:
-    image: "openmicroscopy/omero-server:5.6"
+    # This container uses the tag for the latest server release of OMERO 5
+    # To upgrade to the next major release, increment the major version number
+    image: "openmicroscopy/omero-server:5"
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
@@ -29,7 +31,9 @@ services:
       - "omero:/OMERO"
 
   omeroserver-readonly:
-    image: "openmicroscopy/omero-server:5.6"
+    # This container uses the tag for the latest server release of OMERO 5
+    # To upgrade to the next major release, increment the major version number
+    image: "openmicroscopy/omero-server:5"
     environment:
       # TODO: setup read-only user in postgresql
       CONFIG_omero_db_host: database
@@ -53,7 +57,9 @@ services:
       # to restart readonly if it fails on DB creation.
 
   omeroweb:
-    image: "openmicroscopy/omero-web-standalone:5.6"
+    # This container uses the tag for the latest web release of OMERO 5
+    # To upgrade to the next major release, increment the major version number
+    image: "openmicroscopy/omero-web-standalone:5"
     environment:
       CONFIG_omero_web_server__list: '[["omeroserver-readonly", 4064, "read-only"], ["omeroserver-readwrite", 4064, "read-write"]]'
     networks:
